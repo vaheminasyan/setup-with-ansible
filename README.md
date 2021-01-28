@@ -1,7 +1,7 @@
 # setup-with-ansible
 Ansible workbooks to fasten your setups.
 
-# Usage
+### Usage
 `ansible-workbook -i hosts prometheusTSDB.yml`  
 This assumes that you have an ansible inventory file called 'hosts' in the working directory and want to install "prometheus" in the hosts marked in it.  
 
@@ -10,6 +10,6 @@ This assumes that you have an ansible inventory file called 'hosts' in the worki
   * Repository includes a general configuration, so it can be run by only entering IP addresses for remote hosts.
 * SSH connection to remote hosts (where the roles should be installed)
 
-###List of available Roles
+###List of available Roles  
 * Prometheus
 
