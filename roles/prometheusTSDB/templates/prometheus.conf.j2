@@ -1,0 +1,59 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+#  - job_name: 'node_exporter'
+#    scrape_interval: 5s
+#    static_configs:
+#      - targets:
+#      {% for host in groups['all'] %}
+#      {% if inventory_hostname != host %}
+#        - '{{ host }}:9100'
+#      {% endif %}
+#      {% endfor %}
+#
+
+
+
+  - job_name: 'HTTP-2XX'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/clients/client1/*.yml'
+        - '/etc/prometheus/clients/client2/*.yml'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 127.0.0.1:9115  # Blackbox exporter
+
+remote_write:
+- url: http://172.16.6.43:9201/write
+  remote_timeout: 30s
+  queue_config:
+    capacity: 500
+    max_shards: 1000
+    min_shards: 1
+    max_samples_per_send: 100
+    batch_send_deadline: 5s
+    min_backoff: 30ms
+    max_backoff: 100ms
+remote_read:
+- url: http://172.16.6.43:9201/read
+  remote_timeout: 1m
+
+

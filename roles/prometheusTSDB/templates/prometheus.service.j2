@@ -1,0 +1,16 @@
+[Unit]
+Description={{prometheusServiceName}}
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ prometheusUserName }}
+Group={{ prometheusGroupName }}
+Restart=always
+RestartSec=2
+StartLimitInterval=0
+Type=simple
+ExecStart={{ prometheusExecStart }}
+
+[Install]
+WantedBy=multi-user.target

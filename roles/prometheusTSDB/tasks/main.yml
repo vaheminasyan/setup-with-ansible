@@ -1,0 +1,3 @@
+- name: "Prometheus Install"
+  import_tasks: prometheus.yml
+

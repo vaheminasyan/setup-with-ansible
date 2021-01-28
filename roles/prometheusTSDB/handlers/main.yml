@@ -1,0 +1,19 @@
+- name: Restart Prometheus service
+  systemd:
+    name: "{{prometheusServiceName}}"
+    state: restarted
+    daemon_reload: yes
+  listen: prometheus-restart
+
+- name: Reload prometheus
+  uri:
+    method: POST
+    status_code: 200
+    url: "http://{{inventory_hostname}}:9090/-/reload"
+    validate_certs: no
+  listen: prometheus-reload
+
+- name: Reload Systemd
+  systemd:
+    daemon_reload: yes
+  listen: systemd-reload
