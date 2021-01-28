@@ -24,7 +24,7 @@
     src: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheusVersion }}/prometheus-{{ prometheusVersion }}.linux-amd64.tar.gz"
     dest: /tmp/
     remote_src: yes
-  when: not service_file.stat.exists
+#  when: not service_file.stat.exists
 
 - name: Copy prometheus file to bin
   copy:
@@ -34,29 +34,35 @@
     group: "{{prometheusGroupName}}"
     remote_src: yes
     mode: 0755
-  when: not service_file.stat.exists
+#  when: not service_file.stat.exists
 
 - name: Delete prometheus tmp folder
   file:
     path: '/tmp/prometheus-{{ prometheusVersion }}.linux-amd64'
     state: absent
 
-- name: Create a directory if it does not exist
+- name: Create a config directory if it does not exist
   file:
     path: "{{prometheusConfigDir}}"
     state: directory
+    owner: root
+    group: prometheus
     mode: '0755'
 
 - name: Create DB path
   file:
     path: "{{prometheusDataDir}}"
     state: directory
+    owner: prometheus
+    group: root
     mode: 0755
 
 - name: Copy prometheus generic config file
   template:
     src: prometheus.conf.j2
     dest: "{{prometheusConfigDir}}/prometheus.conf"
+    owner: root
+    group: prometheus
   notify: prometheus-reload
 
 - name: Copy systemd init file
@@ -64,31 +70,6 @@
     src: prometheus.service.j2
     dest: "{{prometheusInitFile}}"
   notify: prometheus-restart
-
-# File SD config dir structure.
-- name: "Creating file SD dirs"
-  block:
-    - name: "Create clients dir"
-      file:
-        path: "{{prometheusConfigDir}}/clients"
-        state: directory
-        mode: 0755
-        group: "{{prometheusGroupName}}"
-        owner: "{{prometheusUserName}}"
-    - name: "Creating client folders"
-      file:
-        path: "{{item}}"
-        state: directory
-        mode: 0755
-        group: "{{prometheusGroupName}}"
-        owner: "{{prometheusUserName}}"
-      with_items:
-        - "{{prometheusConfigDir}}/clients/client1"
-        - "{{prometheusConfigDir}}/clients/client2"
-    - name: Creating location directories
-      file:
-        path: "{{item}}/eu-north1"
-
 
 - name: Start prometheus service
   systemd:

@@ -1,0 +1,8 @@
+---
+- hosts: default
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: "Execute PrometheusTSDB Role"
+      include_role:
+        name: prometheusTSDB
