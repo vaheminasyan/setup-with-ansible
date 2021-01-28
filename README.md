@@ -11,7 +11,7 @@ This assumes that you have an ansible inventory file called 'hosts' in the worki
 * SSH connection to remote hosts (where the roles should be installed)
 
 ###List of available Roles  
-Each role has its own detailed README.
+Each role may have its own readme with additional detailed info.  
 * [Prometheus](https://github.com/vaheminasyan/setup-with-ansible/tree/main/roles/prometheusTSDB)
 
 
